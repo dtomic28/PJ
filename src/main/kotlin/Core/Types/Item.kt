@@ -19,7 +19,7 @@ class Item(
     var ean: String? = null
 ) : BaseObject() {
 
-    fun getPrice(): BigDecimal {
+     fun getTotalPrice(): BigDecimal {
         val taxAmount = price.multiply(taxRate.percentage.divide(BigDecimal("100")))
         val grossPrice = price.add(taxAmount)
         val discountAmount = grossPrice.multiply(discount.divide(BigDecimal("100")))
@@ -29,7 +29,7 @@ class Item(
     override fun toString(): String {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
         return "Item: $name, Unit Price: $price€, Tax Rate: ${taxRate.percentage}%, " +
-                "Price with Tax: €${getPrice()}, EAN: $ean, " +
+                "Price with Tax: €${getTotalPrice()}, EAN: $ean, " +
                 "Created: ${created.format(formatter)}, Modified: ${modified.format(formatter)}"
     }
 }

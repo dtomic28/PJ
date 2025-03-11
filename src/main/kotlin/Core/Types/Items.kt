@@ -58,7 +58,7 @@ class Items : LinkedHashMap<UUID, Pair<Item, Int>>() {
     fun getTotalAmount(): BigDecimal {
         return entries.fold(BigDecimal.ZERO) { acc, entry ->
             val (item, quantity) = entry.value
-            acc.add(item.getPrice().multiply(BigDecimal(quantity)))
+            acc.add(item.getTotalPrice().multiply(BigDecimal(quantity)))
         }
     }
 
