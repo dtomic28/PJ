@@ -53,7 +53,8 @@ fun mainCLI() {
     val milk = Item(
         name = "Mleko",
         price = BigDecimal("1.69"),
-        taxRate = TaxRate.REDUCED
+        taxRate = TaxRate.REDUCED,
+        ean = ""
     )
 
     val bread = Item(

@@ -1,0 +1,29 @@
+commit c1762655d6b81575146095577a41d6c9eb47b998
+Author: Danijel Tomić <danijeltomic2004@gmail.com>
+Date:   Tue Mar 11 13:52:40 2025 +0100
+
+    Finish impl for vaja 1
+
+commit ed6104bb0bd47eb9cdcb08fc288138f0db417c85
+Author: Danijel Tomić <danijeltomic2004@gmail.com>
+Date:   Tue Mar 11 13:14:54 2025 +0100
+
+    <Vaja-1.2> Impliment Items class
+
+commit 815768398924575275a73298358d5076a3dd0697
+Author: Danijel Tomić <danijeltomic2004@gmail.com>
+Date:   Tue Mar 11 12:23:10 2025 +0100
+
+    Impliment item class
+
+commit 9957d6f6f5c559f402c0086e1d64c6b6272c3096
+Author: Danijel Tomić <danijeltomic2004@gmail.com>
+Date:   Tue Mar 11 12:01:39 2025 +0100
+
+    <vaja-1.1> Create initial structure for impl
+
+commit 007c4a89a6be88667512851808b93b22b6f997d6
+Author: Danijel Tomić <danijeltomic2004@gmail.com>
+Date:   Wed Mar 5 13:52:39 2025 +0100
+
+    Initial commit
