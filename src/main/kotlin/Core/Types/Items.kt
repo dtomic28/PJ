@@ -1,11 +1,12 @@
 package Core.Types
 
+import Core.Types.Interface.Searchable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-class Items : LinkedHashMap<UUID, Pair<Item, Int>>() {
+class Items : LinkedHashMap<UUID, Pair<Item, Int>>(), Searchable {
     val changeHistory = mutableListOf<String>()
 
     val created: LocalDateTime = LocalDateTime.now()
@@ -95,5 +96,15 @@ class Items : LinkedHashMap<UUID, Pair<Item, Int>>() {
             updateModified()
         }
         return result
+    }
+
+    override fun search(query: String): Boolean {
+        val searchText = query.lowercase()
+        return values.any { (item, quantity) ->
+            item.search(searchText) || quantity.toString().contains(searchText)
+        } ||
+                changeHistory.any { it.lowercase().contains(searchText) } ||
+                created.toString().lowercase().contains(searchText) ||
+                modified.toString().lowercase().contains(searchText)
     }
 }

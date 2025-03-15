@@ -1,8 +1,8 @@
-package Core.Types
+package Core.Types.Interface
 
 import java.time.LocalDateTime
 
-open class BaseObject {
+abstract class BaseObject : Searchable{
    val created: LocalDateTime = LocalDateTime.now();
    var modified: LocalDateTime = created
        private set
@@ -10,4 +10,6 @@ open class BaseObject {
     protected fun updateModified(){
         modified = LocalDateTime.now();
     }
+
+    abstract override fun search(query: String): Boolean
 }

@@ -1,5 +1,6 @@
 package Core.Types
 
+import Core.Types.Interface.BaseObject
 import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -24,6 +25,15 @@ class Item(
         val grossPrice = price.add(taxAmount)
         val discountAmount = grossPrice.multiply(discount.divide(BigDecimal("100")))
         return grossPrice.subtract(discountAmount)
+    }
+
+    override fun search(query: String): Boolean {
+        val searchText = query.lowercase()
+        return name.lowercase().contains(searchText) ||
+                price.toString().contains(searchText) ||
+                taxRate.name.lowercase().contains(searchText) ||
+                taxRate.percentage.toString().lowercase().contains(searchText) ||
+                (ean?.lowercase()?.contains(searchText) ?: false)
     }
 
     override fun toString(): String {

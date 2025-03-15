@@ -1,5 +1,6 @@
 package Core.Types
 
+import Core.Types.Interface.BaseObject
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -8,10 +9,10 @@ import java.util.*
 class Invoice(
     val invoiceNumber: String,
     val date: LocalDateTime = LocalDateTime.now(),
-    val store: String,
-    val address: String,
-    val taxId: String,
+    val issuer: Company,
+    val customer: Company? = null,
     val paymentMethod: String = "Cash",
+    val cashier: String,
     val items: Items = Items()
 ) : BaseObject()  {
 
@@ -49,12 +50,19 @@ class Invoice(
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
 
         println("=" * 60)
-        println("${store.toUpperCase()}")
-        println("${address}")
-        println("DŠ: ${taxId}")
+        println("IZDAJATELJ:")
+        println(issuer.toString())
         println("-" * 60)
+
+        if (customer != null) {
+            println("STRANKA:")
+            println(customer.toString())
+            println("-" * 60)
+        }
+
         println("Račun št.: ${invoiceNumber}")
         println("Datum: ${date.format(formatter)}")
+        println("Blagajnik: $cashier")
         println("Način plačila: ${paymentMethod}")
         println("-" * 60)
         println("ARTIKLI:")
@@ -68,19 +76,16 @@ class Invoice(
 
         println("-" * 60)
 
-        // Print tax breakdown
-        println("DAVČNI PREGLED:")
-        val taxBreakdown = getTaxBreakdown()
-        taxBreakdown.forEach { (rate, amount) ->
-            println("   DDV ${rate.percentage}%: €$amount")
+        // Print tax breakdown - only if issuer is a taxpayer
+        if (issuer.taxpayer) {
+            println("DAVČNI PREGLED:")
+            val taxBreakdown = getTaxBreakdown()
+            taxBreakdown.forEach { (rate, amount) ->
+                println("   DDV ${rate.percentage}%: €$amount")
+            }
+            println("-" * 60)
         }
 
-        println("-" * 60)
-        println("SKUPAJ: €${getTotalAmount()}")
-        println("=" * 60)
-
-        println("\nUstvarjeno: ${created.format(formatter)}")
-        println("Zadnja sprememba: ${modified.format(formatter)}")
     }
 
     fun printChangeHistory() {
@@ -89,10 +94,19 @@ class Invoice(
             println("${index + 1}. $change")
         }
     }
-
     // Operator to repeat a string
     private operator fun String.times(i: Int) = repeat(i)
 
+    override fun search(query: String): Boolean {
+        val searchText = query.lowercase()
+        return invoiceNumber.lowercase().contains(searchText) ||
+                date.toString().lowercase().contains(searchText) ||
+                issuer.search(searchText) ||
+                (customer?.search(searchText) ?: false) ||
+                cashier.lowercase().contains(searchText) ||
+                paymentMethod.lowercase().contains(searchText) ||
+                items.search(searchText)
+                }
 
 
 }

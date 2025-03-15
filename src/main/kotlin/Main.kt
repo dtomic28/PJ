@@ -1,3 +1,4 @@
+import Core.Types.Company
 import Core.Types.Invoice
 import Core.Types.Item
 import Core.Types.TaxRate
@@ -39,13 +40,33 @@ fun main() = application {
 
 
 fun mainCLI() {
+    // Create company for the issuer (based on the receipt in the image)
+    val issuerCompany = Company(
+        name = "HM Hemma Market d.o.o.",
+        taxNumber = "SI81756895",
+        registrationNumber = "1234567000",
+        accountNumber = "SI56 0231 0001 2345 678",
+        email = "info@hemmamarket.si",
+        taxpayer = true
+    )
+
+    // Create a company for the customer
+    val customerCompany = Company(
+        name = "Kupec d.o.o.",
+        taxNumber = "SI12345678",
+        registrationNumber = "5678901000",
+        accountNumber = "SI56 0310 0100 0000 123",
+        email = "info@kupec.si",
+        taxpayer = true
+    )
+
     // Create an invoice based on the receipt in the image
     val invoice = Invoice(
         invoiceNumber = "BK5-1-1981",
         date = LocalDateTime.of(2025, 3, 8, 13, 30, 27),
-        store = "HM Hemma Market d.o.o.",
-        address = "Vasa Pelagica 20, 2000 Maribor",
-        taxId = "SI81756895",
+        issuer = issuerCompany,
+        customer = customerCompany,  // This makes it an original invoice
+        cashier = "Jana Novak",
         paymentMethod = "Card"
     )
 
@@ -53,8 +74,7 @@ fun mainCLI() {
     val milk = Item(
         name = "Mleko",
         price = BigDecimal("1.69"),
-        taxRate = TaxRate.REDUCED,
-        ean = ""
+        taxRate = TaxRate.REDUCED
     )
 
     val bread = Item(
@@ -89,9 +109,44 @@ fun mainCLI() {
     invoice.addItem(cheese)
     invoice.addItem(chocolate)
 
+    // Create a copy of the invoice without customer (not an original)
+    val copyInvoice = Invoice(
+        invoiceNumber = invoice.invoiceNumber + "-COPY",
+        date = invoice.date,
+        issuer = invoice.issuer,
+        customer = null,  // This makes it a non-original invoice
+        cashier = invoice.cashier,
+        paymentMethod = invoice.paymentMethod
+    )
+
+    // Add the same items to the copy invoice
+    copyInvoice.addItem(milk)
+    copyInvoice.addItem(bread)
+    copyInvoice.addItem(water)
+    copyInvoice.addItem(cheese)
+    copyInvoice.addItem(chocolate)
+
     // Print the original invoice
-    println("PRVOTNI RAČUN:")
+    println("PRVOTNI RAČUN (ORIGINAL):")
     invoice.print()
+
+    // Print the copy invoice (should not have "ORIGINAL RAČUNA" at the bottom)
+    println("\nKOPIJA RAČUNA:")
+    copyInvoice.print()
+
+    // Demonstrate the search functionality
+    println("\nDEMONSTRACIJA ISKANJA:")
+
+    // Search terms to demonstrate
+    val searchTerms = listOf("mleko", "card", "jana", "hemma", "si123", "9.5", "2025")
+
+    searchTerms.forEach { term ->
+        println("Iskanje za \"$term\":")
+        println("  - V računu: ${invoice.search(term)}")
+        println("  - V podjetju izdajatelja: ${issuerCompany.search(term)}")
+        println("  - V podjetju stranke: ${customerCompany.search(term)}")
+        println("  - V izdelku mleko: ${milk.search(term)}")
+    }
 
     // Demonstrate changing quantities
     println("\nSPREMINJANJE KOLIČIN:")
@@ -107,23 +162,4 @@ fun mainCLI() {
 
     // Print change history
     invoice.printChangeHistory()
-
-    // Demonstrate exception handling
-    println("\nPRIKAZ OBRAVNAVE IZJEM:")
-    try {
-        // Try to remove a non-existent item
-        println("Poskus odstranitve neobstoječega artikla...")
-        invoice.removeItem(UUID.randomUUID())
-    } catch (e: IllegalStateException) {
-        println("Ujeta izjema: ${e.message}")
-    }
-
-    try {
-        // Try to remove more items than available
-        println("Poskus odstranitve več artiklov, kot je na voljo...")
-        invoice.removeItem(water.id, 3)
-    } catch (e: IllegalStateException) {
-        println("Ujeta izjema: ${e.message}")
-    }
-
 }
