@@ -40,7 +40,6 @@ fun main() = application {
 
 
 fun mainCLI() {
-    // Create company for the issuer (based on the receipt in the image)
     val issuerCompany = Company(
         name = "HM Hemma Market d.o.o.",
         taxNumber = "SI81756895",
@@ -50,7 +49,6 @@ fun mainCLI() {
         taxpayer = true
     )
 
-    // Create a company for the customer
     val customerCompany = Company(
         name = "Kupec d.o.o.",
         taxNumber = "SI12345678",
@@ -60,17 +58,15 @@ fun mainCLI() {
         taxpayer = true
     )
 
-    // Create an invoice based on the receipt in the image
     val invoice = Invoice(
         invoiceNumber = "BK5-1-1981",
         date = LocalDateTime.of(2025, 3, 8, 13, 30, 27),
         issuer = issuerCompany,
-        customer = customerCompany,  // This makes it an original invoice
+        customer = customerCompany,
         cashier = "Jana Novak",
         paymentMethod = "Card"
     )
 
-    // Create items based on the receipt
     val milk = Item(
         name = "Mleko",
         price = BigDecimal("1.69"),
@@ -102,42 +98,35 @@ fun mainCLI() {
         ean = "3859888047502"
     )
 
-    // Add items to the invoice with quantities
     invoice.addItem(milk)
     invoice.addItem(bread)
     invoice.addItem(water)
     invoice.addItem(cheese)
     invoice.addItem(chocolate)
 
-    // Create a copy of the invoice without customer (not an original)
     val copyInvoice = Invoice(
         invoiceNumber = invoice.invoiceNumber + "-COPY",
         date = invoice.date,
         issuer = invoice.issuer,
-        customer = null,  // This makes it a non-original invoice
+        customer = null,
         cashier = invoice.cashier,
         paymentMethod = invoice.paymentMethod
     )
 
-    // Add the same items to the copy invoice
     copyInvoice.addItem(milk)
     copyInvoice.addItem(bread)
     copyInvoice.addItem(water)
     copyInvoice.addItem(cheese)
     copyInvoice.addItem(chocolate)
 
-    // Print the original invoice
     println("PRVOTNI RAČUN (ORIGINAL):")
     invoice.print()
 
-    // Print the copy invoice (should not have "ORIGINAL RAČUNA" at the bottom)
     println("\nKOPIJA RAČUNA:")
     copyInvoice.print()
 
-    // Demonstrate the search functionality
     println("\nDEMONSTRACIJA ISKANJA:")
 
-    // Search terms to demonstrate
     val searchTerms = listOf("mleko", "card", "jana", "hemma", "si123", "9.5", "2025")
 
     searchTerms.forEach { term ->
@@ -148,18 +137,15 @@ fun mainCLI() {
         println("  - V izdelku mleko: ${milk.search(term)}")
     }
 
-    // Demonstrate changing quantities
     println("\nSPREMINJANJE KOLIČIN:")
     println("Dodajanje 2 dodatnih mleka...")
-    invoice.addItem(milk, 2)  // Add 2 more milks
+    invoice.addItem(milk, 2)
 
     println("Odstranjevanje kruha...")
-    invoice.removeItem(bread.id, 1)  // Remove the bread
+    invoice.removeItem(bread.id, 1)
 
-    // Print the updated invoice
     println("\nPOSODOBLJEN RAČUN:")
     invoice.print()
 
-    // Print change history
     invoice.printChangeHistory()
 }
