@@ -11,7 +11,7 @@ enum class TaxRate(val percentage: BigDecimal) {
     ZERO(BigDecimal("0.0"))        // Zero-rated
 }
 
-class Item(
+open class Item(
     val id: UUID = UUID.randomUUID(),
     var name: String,
     var price: BigDecimal,

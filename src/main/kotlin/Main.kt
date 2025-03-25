@@ -1,7 +1,9 @@
 import Core.Types.Company
 import Core.Types.Invoice
+import Core.Types.InternalItem
 import Core.Types.Item
 import Core.Types.TaxRate
+import Util.BarcodeUtils
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -104,6 +106,70 @@ fun mainCLI() {
     invoice.addItem(cheese)
     invoice.addItem(chocolate)
 
+    // Add internal items with barcodes
+    println("\nDODAJANJE INTERNIH IZDELKOV:")
+
+    // Create internal items from different departments
+    // Banana (Fruit) - 250g
+    val bananaBarcode = BarcodeUtils.generateInternalBarcode(201, 1001, 250)
+    val banana = InternalItem(
+        name = "Banana",
+        price = BigDecimal("0.0025").multiply(BigDecimal(250)), // €0.0025 per gram
+        taxRate = TaxRate.REDUCED,
+        internalId = 1001,
+        department = "Fruit",
+        weightGrams = 250,
+        ean = bananaBarcode
+    )
+
+    // Tomato (Vegetables) - 300g
+    val tomatoBarcode = BarcodeUtils.generateInternalBarcode(210, 2001, 300)
+    val tomato = InternalItem(
+        name = "Tomato",
+        price = BigDecimal("0.003").multiply(BigDecimal(300)), // €0.003 per gram
+        taxRate = TaxRate.REDUCED,
+        internalId = 2001,
+        department = "Vegetables",
+        weightGrams = 300,
+        ean = tomatoBarcode
+    )
+
+    // Ham (Meat) - 175g
+    val hamBarcode = BarcodeUtils.generateInternalBarcode(220, 3001, 175)
+    val ham = InternalItem(
+        name = "Ham",
+        price = BigDecimal("0.015").multiply(BigDecimal(175)), // €0.015 per gram
+        taxRate = TaxRate.REDUCED,
+        internalId = 3001,
+        department = "Meat",
+        weightGrams = 175,
+        ean = hamBarcode
+    )
+
+    // Add the internal items to the invoice
+    invoice.addItem(banana)
+    invoice.addItem(tomato)
+    invoice.addItem(ham)
+
+    // Test parsing a barcode
+    println("Parsing internal barcode:")
+    try {
+        val parsedItem = BarcodeUtils.parseInternalBarcode(hamBarcode)
+        println("Successfully parsed item: ${parsedItem.name}, ${parsedItem.weightGrams}g, Department: ${parsedItem.department}")
+    } catch (e: IllegalArgumentException) {
+        println("Error parsing barcode: ${e.message}")
+    }
+
+    // Test updating weight
+    println("\nUpdating weight for banana from 250g to 400g:")
+    try {
+        banana.updateWeight(400)
+        println("New barcode: ${banana.ean}")
+        println("New price: €${banana.price}")
+    } catch (e: Exception) {
+        println("Error updating weight: ${e.message}")
+    }
+
     val copyInvoice = Invoice(
         invoiceNumber = invoice.invoiceNumber + "-COPY",
         date = invoice.date,
@@ -118,8 +184,12 @@ fun mainCLI() {
     copyInvoice.addItem(water)
     copyInvoice.addItem(cheese)
     copyInvoice.addItem(chocolate)
+    // Also add the internal items to the copy
+    copyInvoice.addItem(banana)
+    copyInvoice.addItem(tomato)
+    copyInvoice.addItem(ham)
 
-    println("PRVOTNI RAČUN (ORIGINAL):")
+    println("\nPRVOTNI RAČUN (ORIGINAL):")
     invoice.print()
 
     println("\nKOPIJA RAČUNA:")
@@ -127,7 +197,7 @@ fun mainCLI() {
 
     println("\nDEMONSTRACIJA ISKANJA:")
 
-    val searchTerms = listOf("mleko", "card", "jana", "hemma", "si123", "9.5", "2025")
+    val searchTerms = listOf("mleko", "card", "jana", "hemma", "si123", "9.5", "2025", "banana", "meat")
 
     searchTerms.forEach { term ->
         println("Iskanje za \"$term\":")
@@ -135,6 +205,7 @@ fun mainCLI() {
         println("  - V podjetju izdajatelja: ${issuerCompany.search(term)}")
         println("  - V podjetju stranke: ${customerCompany.search(term)}")
         println("  - V izdelku mleko: ${milk.search(term)}")
+        println("  - V internem izdelku banana: ${banana.search(term)}")
     }
 
     println("\nSPREMINJANJE KOLIČIN:")
