@@ -6,19 +6,18 @@ import java.math.BigDecimal
 
 object BarcodeUtils {
     fun generateCheckDigit(input: String): Int {
-        // Check if input has exactly 12 digits
+        // Check if input has at least 12 digits
         if (input.length < 12 || !input.all { it.isDigit() }) {
-            throw IllegalArgumentException("Partial barcode must have exactly 12 digits")
+            throw IllegalArgumentException("Input must have at least 12 digits")
         }
 
-        val partialBarcode = input.substring(0, 11);
+        // Take exactly the first 12 digits
+        val partialBarcode = input.substring(0, 12)
 
         var sum = 0
-
-        // EAN-13 algorithm: odd positions (1-indexed) multiply by 1, even by 3
+        // EAN-13 algorithm: even positions (0-indexed) multiply by 3, odd by 1
         partialBarcode.forEachIndexed { index, char ->
             val digit = char.toString().toInt()
-            // For 0-indexed, even indices are odd positions and odd indices are even positions
             sum += if (index % 2 == 0) digit else digit * 3
         }
 
@@ -34,7 +33,7 @@ object BarcodeUtils {
         }
 
         val checkDigit = barcode.last().toString().toInt()
-        val calculatedCheckDigit = generateCheckDigit(barcode.substring(0, 12))
+        val calculatedCheckDigit = generateCheckDigit(barcode)
 
         return checkDigit == calculatedCheckDigit
     }

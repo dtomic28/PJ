@@ -21,7 +21,15 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.0-M1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.0-M1")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testClassesDirs = files("src/test/kotlin")
+    classpath = sourceSets["test"].runtimeClasspath
 }
 
 compose.desktop {

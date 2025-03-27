@@ -1,19 +1,15 @@
 package Util
 
-import Core.Types.InternalItem
-import Util.BarcodeUtils
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
+import kotlin.test.Test
 
-class BarcodeUtilsTest {
-
+class BarcodeUtilsTest{
     @Test
     fun testGenerateCheckDigit() {
         // Test with known EAN-13 examples
         assertEquals(7, BarcodeUtils.generateCheckDigit("590123412345"))
-        assertEquals(0, BarcodeUtils.generateCheckDigit("978020137962"))
-        assertEquals(9, BarcodeUtils.generateCheckDigit("978316148410"))
+        assertEquals(4, BarcodeUtils.generateCheckDigit("978020137962"))
+        assertEquals(0, BarcodeUtils.generateCheckDigit("978316148410"))
 
         // Test with internal barcode format
         assertEquals(0, BarcodeUtils.generateCheckDigit("211678900200"))
@@ -96,7 +92,7 @@ class BarcodeUtilsTest {
         assertEquals("Vegetables", item.department) // Based on dept code 211
 
         // Test with meat department
-        val meatItem = BarcodeUtils.parseInternalBarcode("2201234005008")
+        val meatItem = BarcodeUtils.parseInternalBarcode("2201234005009")
         assertEquals("Meat", meatItem.department)
 
         // Test with invalid barcode
