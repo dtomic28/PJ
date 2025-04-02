@@ -91,6 +91,15 @@ class BarcodeUtilsTest{
         assertEquals(200, item.weightGrams)
         assertEquals("Vegetables", item.department) // Based on dept code 211
 
+        assertThrows(IllegalArgumentException::class.java) {
+            BarcodeUtils.parseInternalBarcode("1234567782093")
+        }
+
+        BarcodeUtils.parseInternalBarcode("2116789002000")
+        assertEquals(6789, item.internalId)
+        assertEquals(200, item.weightGrams)
+        assertEquals("Vegetables", item.department) // Based on dept code 211
+
         // Test with meat department
         val meatItem = BarcodeUtils.parseInternalBarcode("2201234005009")
         assertEquals("Meat", meatItem.department)
@@ -105,4 +114,6 @@ class BarcodeUtilsTest{
             BarcodeUtils.parseInternalBarcode("2116789002001") // Wrong check digit
         }
     }
+
+
 }

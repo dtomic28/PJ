@@ -1,6 +1,7 @@
 package Core.Types
 
 import Core.Types.Interface.BaseObject
+import Util.BarcodeUtils
 import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -19,6 +20,12 @@ open class Item(
     var discount: BigDecimal = BigDecimal.ZERO,
     var ean: String? = null
 ) : BaseObject() {
+
+    init{
+        if (!ean.isNullOrEmpty() && !BarcodeUtils.isBarcodeValid(ean!!)) {
+            throw IllegalArgumentException("Invalid ean")
+        }
+    }
 
      fun getTotalPrice(): BigDecimal {
         val taxAmount = price.multiply(taxRate.percentage.divide(BigDecimal("100")))

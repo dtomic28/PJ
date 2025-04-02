@@ -10,6 +10,9 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +41,19 @@ fun App() {
                 Tab(
                     selected = selectedTab == index,
                     onClick = { selectedTab = index },
-                    text = { Text(title) }
+                    content = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(16.dp),
+                        ) {
+                            when (index) {
+                                0 -> Icon(Icons.Default.List, contentDescription = null)
+                                1 -> Icon(Icons.Default.Info, contentDescription = null)
+                            }
+                            Text(title)
+                        }
+                    }
                 )
             }
         }
@@ -61,7 +76,7 @@ fun App() {
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(onCloseRequest = ::exitApplication, title = "Invoice Manager") {
         App()
     }
     mainCLI()
@@ -120,18 +135,21 @@ fun mainCLI() {
         taxRate = TaxRate.REDUCED
     )
 
-    val chocolate = Item(
-        name = "Čokolada",
-        price = BigDecimal("1.79"),
-        taxRate = TaxRate.STANDARD,
-        ean = "3859888047502"
-    )
+    try {
+        val chocolate = Item(
+            name = "Čokolada",
+            price = BigDecimal("1.79"),
+            taxRate = TaxRate.STANDARD,
+            ean = "3859888047502"
+        )
+    }catch (e: Exception) {
+        println("Invalid exception: Bad EAN")
+    }
 
     invoice.addItem(milk)
     invoice.addItem(bread)
     invoice.addItem(water)
     invoice.addItem(cheese)
-    invoice.addItem(chocolate)
 
     // Add internal items with barcodes
     println("\nDODAJANJE INTERNIH IZDELKOV:")
@@ -210,7 +228,6 @@ fun mainCLI() {
     copyInvoice.addItem(bread)
     copyInvoice.addItem(water)
     copyInvoice.addItem(cheese)
-    copyInvoice.addItem(chocolate)
     // Also add the internal items to the copy
     copyInvoice.addItem(banana)
     copyInvoice.addItem(tomato)
