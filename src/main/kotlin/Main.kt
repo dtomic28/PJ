@@ -11,8 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +48,7 @@ fun App() {
                             modifier = Modifier.padding(16.dp),
                         ) {
                             when (index) {
-                                0 -> Icon(Icons.Default.List, contentDescription = null)
+                                0 -> Icon(Icons.AutoMirrored.Filled.List, contentDescription = null)
                                 1 -> Icon(Icons.Default.Info, contentDescription = null)
                             }
                             Text(title)
