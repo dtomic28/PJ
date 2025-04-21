@@ -1,8 +1,10 @@
 package util
 
+import Util.DatabaseUtil
+
 fun main() {
-    val connection = DatabaseUtil.connection
-    val statement = connection.createStatement()
+    val conn = DatabaseUtil.connection
+    val statement = conn.createStatement()
     val result = statement.executeQuery("SELECT * FROM company")
 
     while (result.next()) {
@@ -11,5 +13,5 @@ fun main() {
 
     result.close()
     statement.close()
-    connection.close()
+    conn.close()
 }
