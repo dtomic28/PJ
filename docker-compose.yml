@@ -1,0 +1,40 @@
+services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - web_network
+  # phpMyAdmin with auto-login
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: rootpassword
+      PMA_ABSOLUTE_URI: http://localhost:8080/
+    ports:
+      - "8080:80"
+    networks:
+      - web_network
+networks:
+  web_network:
+    driver: bridge
