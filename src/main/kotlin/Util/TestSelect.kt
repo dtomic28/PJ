@@ -1,15 +1,15 @@
 package util
 
 fun main() {
-    val conn = DatabaseUtil.connection
-    val stmt = conn.createStatement()
-    val rs = stmt.executeQuery("SELECT * FROM company")
+    val connection = DatabaseUtil.connection
+    val statement = connection.createStatement()
+    val result = statement.executeQuery("SELECT * FROM company")
 
-    while (rs.next()) {
-        println("Company: " + rs.getString("name"))
+    while (result.next()) {
+        println("Company: " + result.getString("name"))
     }
 
-    rs.close()
-    stmt.close()
-    conn.close()
+    result.close()
+    statement.close()
+    connection.close()
 }
