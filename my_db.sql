@@ -1,63 +1,59 @@
--- Create the database if it does not exist
-CREATE DATABASE IF NOT EXISTS my_database;
 
--- Switch to the created database
-USE my_database;
+-- Create database
+CREATE DATABASE IF NOT EXISTS invoice_system;
+USE invoice_system;
 
--- Create Company table
+-- Company table
 CREATE TABLE IF NOT EXISTS company (
                                        id BINARY(16) PRIMARY KEY,
-                                       name VARCHAR(255) NOT NULL,
-                                       tax_number VARCHAR(255) NOT NULL,
-                                       registration_number VARCHAR(255) NOT NULL,
-                                       account_number VARCHAR(255) NOT NULL,
-                                       email VARCHAR(255) NOT NULL,
-                                       taxpayer BOOLEAN NOT NULL,
-                                       created DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                       modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    name VARCHAR(255) NOT NULL,
+    tax_number VARCHAR(50) NOT NULL,
+    registration_number VARCHAR(50) NOT NULL,
+    account_number VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    taxpayer BOOLEAN NOT NULL,
+    created DATETIME NOT NULL,
+    modified DATETIME NOT NULL
+    );
 
--- Create InternalItem table
-CREATE TABLE IF NOT EXISTS internal_item (
-                                             id BINARY(16) PRIMARY KEY,
-                                             name VARCHAR(255) NOT NULL,
-                                             price DECIMAL(10, 2) NOT NULL,
-                                             tax_rate ENUM('STANDARD', 'REDUCED', 'ZERO') NOT NULL,
-                                             discount DECIMAL(5, 2) DEFAULT 0,
-                                             ean VARCHAR(255),
-                                             internal_id INT NOT NULL,
-                                             department VARCHAR(255) NOT NULL,
-                                             weight_grams INT DEFAULT 0,
-                                             created DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                             modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Create Item table
+-- Item table
 CREATE TABLE IF NOT EXISTS item (
                                     id BINARY(16) PRIMARY KEY,
-                                    name VARCHAR(255) NOT NULL,
-                                    price DECIMAL(10, 2) NOT NULL,
-                                    tax_rate ENUM('STANDARD', 'REDUCED', 'ZERO') NOT NULL,
-                                    discount DECIMAL(5, 2) DEFAULT 0,
-                                    ean VARCHAR(255),
-                                    created DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    tax_rate ENUM('STANDARD', 'REDUCED', 'ZERO') NOT NULL,
+    discount DECIMAL(5, 2) DEFAULT 0,
+    ean VARCHAR(50),
+    created DATETIME NOT NULL,
+    modified DATETIME NOT NULL
+    );
 
--- Create Invoice table
+-- Internal Item table
+CREATE TABLE IF NOT EXISTS internal_item (
+                                             id BINARY(16) PRIMARY KEY,
+    item_id BINARY(16) NOT NULL,
+    internal_id INT NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    weight_grams INT DEFAULT 0,
+    created DATETIME NOT NULL,
+    modified DATETIME NOT NULL,
+    FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
+    );
+
+-- Invoice table
 CREATE TABLE IF NOT EXISTS invoice (
                                        id BINARY(16) PRIMARY KEY,
-                                       invoice_number VARCHAR(255) NOT NULL,
-                                       date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                       issuer_id BINARY(16) NOT NULL,
-                                       customer_id BINARY(16),
-                                       payment_method VARCHAR(255) DEFAULT 'Cash',
-                                       cashier VARCHAR(255) NOT NULL,
-                                       created DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                       modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                       FOREIGN KEY (issuer_id) REFERENCES company(id),
-                                       FOREIGN KEY (customer_id) REFERENCES company(id)
-);
+    invoice_number VARCHAR(50) NOT NULL,
+    date DATETIME NOT NULL,
+    issuer_id BINARY(16) NOT NULL,
+    customer_id BINARY(16),
+    payment_method VARCHAR(50) DEFAULT 'Cash',
+    cashier VARCHAR(255) NOT NULL,
+    created DATETIME NOT NULL,
+    modified DATETIME NOT NULL,
+    FOREIGN KEY (issuer_id) REFERENCES company(id),
+    FOREIGN KEY (customer_id) REFERENCES company(id)
+    );
 
 -- Create a table for linking items to invoices (many-to-many relationship)
 -- Create a table for linking items to invoices (many-to-many relationship)
