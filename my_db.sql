@@ -60,11 +60,17 @@ CREATE TABLE IF NOT EXISTS invoice (
 );
 
 -- Create a table for linking items to invoices (many-to-many relationship)
+-- Create a table for linking items to invoices (many-to-many relationship)
+-- The table will store either 'item_id' or 'internal_item_id' based on the 'type' column
 CREATE TABLE IF NOT EXISTS invoice_items (
                                              invoice_id BINARY(16),
-                                             item_id BINARY(16),
+                                             item_id BINARY(16) DEFAULT NULL,
+                                             internal_item_id BINARY(16) DEFAULT NULL,
                                              quantity INT DEFAULT 1,
-                                             PRIMARY KEY (invoice_id, item_id),
+                                             type ENUM('ITEM', 'INTERNAL_ITEM') NOT NULL,  -- Used to distinguish between Item and InternalItem
+                                             PRIMARY KEY (invoice_id, item_id, internal_item_id),
                                              FOREIGN KEY (invoice_id) REFERENCES invoice(id),
-                                             FOREIGN KEY (item_id) REFERENCES item(id)
+                                             FOREIGN KEY (item_id) REFERENCES item(id),
+                                             FOREIGN KEY (internal_item_id) REFERENCES internal_item(id)
 );
+
